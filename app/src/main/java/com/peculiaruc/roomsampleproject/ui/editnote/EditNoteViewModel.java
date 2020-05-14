@@ -5,7 +5,9 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
+import androidx.lifecycle.LiveData;
 
+import com.peculiaruc.roomsampleproject.Note;
 import com.peculiaruc.roomsampleproject.NoteDao;
 import com.peculiaruc.roomsampleproject.NoteRoomDatabase;
 
@@ -20,5 +22,9 @@ public class EditNoteViewModel extends AndroidViewModel {
         Log.i(TAG, "Edit ViewModel");
         db = NoteRoomDatabase.getDatabase(application);
         noteDao = db.noteDao();
+    }
+
+    public LiveData<Note> getNote(String noteId) {
+        return noteDao.getNote(noteId);
     }
 }

@@ -17,11 +17,12 @@ import com.peculiaruc.roomsampleproject.Adapter.NoteListAdapter;
 import com.peculiaruc.roomsampleproject.Note;
 import com.peculiaruc.roomsampleproject.NoteViewModel;
 import com.peculiaruc.roomsampleproject.R;
+import com.peculiaruc.roomsampleproject.ui.editnote.EditNoteActivity;
 
 import java.util.List;
 import java.util.UUID;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements NoteListAdapter.OnDeleteClickListener {
 
     private static final int NEW_NOTE_ACTIVITY_REQUEST__CODE_ = 1;
     public static final int UPDATE_NOTE_ACTIVITY_REQUEST__CODE_ = 2;
@@ -35,7 +36,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         RecyclerView recyclerView = findViewById(R.id.recycler_view);
-        noteListAdapter = new NoteListAdapter(this);
+        noteListAdapter = new NoteListAdapter(this, this);
         recyclerView.setAdapter(noteListAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
@@ -51,7 +52,7 @@ public class MainActivity extends AppCompatActivity {
 
         noteViewModel = ViewModelProviders.of(this).get(NoteViewModel.class);
 
-        noteViewModel.getAllNotes().observe(this, new Observer<List<Note>>() {
+        noteViewModel.getAllNote.observe(this, new Observer<List<Note>>() {
             @Override
             public void onChanged(List<Note> notes) {
                 noteListAdapter.setNotes(notes);
@@ -69,8 +70,23 @@ public class MainActivity extends AppCompatActivity {
 
         if (requestCode == NEW_NOTE_ACTIVITY_REQUEST__CODE_ && requestCode == RESULT_OK){
             Toast.makeText(getApplicationContext(), R.string.saved, Toast.LENGTH_LONG).show();
-        }else{
+        } else if (requestCode == UPDATE_NOTE_ACTIVITY_REQUEST__CODE_ && requestCode == RESULT_OK) {
+            // Code to update Note
+            Note note1 = new Note(
+                    data.getStringExtra(EditNoteActivity.NOTE_ID),
+                    data.getStringExtra(EditNoteActivity.UPDATED_NOTE));
+            noteViewModel.update(note1);
+
+            Toast.makeText(getApplicationContext(), R.string.updated,
+                    Toast.LENGTH_LONG).show();
+        } else {
             Toast.makeText(getApplicationContext(), R.string.not_saved, Toast.LENGTH_LONG).show();
         }
+    }
+
+    @Override
+    public void OnDeleteClickListener(Note myNote) {
+        noteViewModel.delete(myNote);
+
     }
 }
